@@ -44,8 +44,10 @@ class ShapeNetLoader:
 
         # removes the x axis rotation found in all ShapeNet objects, this is caused by importing .obj files
         # the object has the same pose as before, just that the rotation_euler is now [0, 0, 0]
-        for obj in loaded_obj:
-            obj.persist_transformation_into_mesh(location=False, rotation=True, scale=False)
+
+        # TODO: Keep this ??
+        # for obj in loaded_obj:
+        #     obj.persist_transformation_into_mesh(location=False, rotation=True, scale=False)
 
         # check if the move_to_world_origin flag is set
         if move_object_origin:
@@ -75,13 +77,13 @@ class ShapeNetLoader:
                 id_path = os.path.join(data_path, parent_synset_id)
 
                 if not used_source_id:
-                    files.extend(glob.glob(os.path.join(id_path, "*", "models", "*.obj")))
+                    files.extend(glob.glob(os.path.join(id_path, "model_normalized.obj")))
                 else:
                     if not os.path.exists(os.path.join(id_path, used_source_id)):
                         raise Exception("The used_source_id {} is not correct".format(used_source_id))
 
                         # Using both the used_synset_id and used_source_id
-                    files.extend(glob.glob(os.path.join(id_path, used_source_id, "models", "*.obj")))
+                    files.extend(glob.glob(os.path.join(id_path, used_source_id, "*", "model_normalized.obj")))
 
             # Sort files to make random choice deterministic for the case when used_source_id is not specified
             files.sort()
