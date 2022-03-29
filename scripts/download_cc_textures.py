@@ -7,6 +7,8 @@ import csv
 import requests
 path.append(os.path.join(os.path.dirname(__file__), ".."))
 from src.utility.SetupUtility import SetupUtility
+from pathlib import Path
+import shutil
 
 if __name__ == "__main__":
     # setting the default header, else the server does not allow the download
@@ -21,7 +23,8 @@ if __name__ == "__main__":
     if not os.path.exists(cc_texture_dir):
         os.makedirs(cc_texture_dir)
     else:
-        raise Exception("The folder already exists!")
+        pass
+        # raise Exception("The folder already exists!")
 
     # download the csv file, which contains all the download links
     csv_url = "https://cc0textures.com/api/v1/downloads_csv"
@@ -40,7 +43,8 @@ if __name__ == "__main__":
 
     excluding_list = ["sign", "roadlines", "manhole", "backdrop", "foliage", "TreeEnd", "TreeStump",
                       "3DBread", "3DApple", "FlowerSet", "FoodSteps", "PineNeedles", "Grate",
-                      "PavingEdge", "Painting", "RockBrush", "WrinklesBrush", "Sticker", "3DRock"]
+                      "PavingEdge", "Painting", "RockBrush", "WrinklesBrush", "Sticker", "3DRock",
+                      'Planks007', 'Chip002']
 
     # download each asset and create a folder for it (unpacking + deleting the zip included)
     for index, (asset, link) in enumerate(data.items()):
@@ -49,14 +53,21 @@ if __name__ == "__main__":
             if asset.lower().startswith(exclude_element.lower()):
                 do_not_use = True
                 break
+        current_folder =  os.path.join(cc_texture_dir, asset)
+        if Path(current_folder).exists():
+            do_not_use = True
         if do_not_use:
             continue
         print("Download asset: {} of {}/{}".format(asset, index, len(data)))
-        current_folder =  os.path.join(cc_texture_dir, asset)
         if not os.path.exists(current_folder):
             os.makedirs(current_folder)
         current_file_path = os.path.join(current_folder, "{}.zip".format(asset))
         response = requests.get(link, headers=headers)
-        SetupUtility.extract_from_response(current_folder, response)
+        try:
+            SetupUtility.extract_from_response(current_folder, response)
+        except:
+            shutil.rmtree(current_folder)
+            print("add to excluding list", asset)
+
 
     print("Done downloading textures, saved in {}".format(cc_texture_dir))

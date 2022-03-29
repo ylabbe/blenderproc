@@ -64,7 +64,6 @@ class SetupUtility:
     
     @staticmethod
     def setup_pip(user_required_packages=None, blender_path=None, major_version=None, reinstall_packages=False):
-        return []
         """ Makes sure the given user required and the general required python packages are installed in the blender proc env
 
         At the first run all installed packages are collected via pip freeze.
