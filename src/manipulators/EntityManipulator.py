@@ -301,7 +301,10 @@ class EntityManipulator(Module):
 
         # get raw value from the set parameters if it is to be sampled once for all selected entities
         if op_mode == "once_for_all":
-            params = self._get_the_set_params(params_conf)
+            try:    
+              params = self._get_the_set_params(params_conf)
+            except IndexError:
+              params = dict()
 
         for entity in entities:
 
